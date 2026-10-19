@@ -1,49 +1,36 @@
-# Assignment 2 Casino DApp
+# Assignment 3 Ethereum and Solidity
 
-This coursework project adapts the Casino Ethereum tutorial for a local React frontend connected to MetaMask on the Ethereum Sepolia test network. It retains React, Webpack and Babel and uses ethers 6 for the wallet connection.
+Source files for Assignment / Lab 3, Session 4.
 
-## Run locally
+| File | Question | Purpose | Compiler |
+| --- | --- | --- | --- |
+| StorageTest.sol | 1(d) | Store a 32-element bytes32 array and measure transaction gas | Solidity 0.5.1 |
+| HelloWorld.sol | 5(d), 5(e), 5(g) | Return the exact string Hello, world! | Solidity 0.5.1 |
+| Dangerous.sol | 6 | Original vulnerable contract supplied in the assignment; imported by ReentrancyDemo | Solidity 0.4.24 |
+| ReentrancyDemo.sol | 6(d) | Demonstrate reentrancy against a locally deployed Dangerous instance | Solidity 0.4.24 |
+| SafeDeposits.sol | 6(e) | Demonstrate checks-effects-interactions and a reentrancy lock | Solidity 0.4.24 |
 
-Install Node.js, then run these commands from the project directory:
+## Compilation
 
-```sh
-npm ci
-npm run build
-npm start
-```
+Use the exact compiler versions listed above. The Solidity 0.4.24 files and Solidity 0.5.1 files are separate compilation groups.
 
-Open http://127.0.0.1:8080 in a browser with MetaMask installed. Connect the wallet on Sepolia (chain ID 11155111). The checked-in `dist` files are the build used in the local browser test.
+- StorageTest: optimizer disabled; compiler EVM target Byzantium. The report measured the first put call on a fresh contract with the 32 nonzero bytes32 values from the assignment, using Remix VM Osaka.
+- HelloWorld: optimizer enabled with 200 runs; compiler EVM target Byzantium.
+- Reentrancy example: compiler 0.4.24, optimizer disabled, EVM target Byzantium. Keep Dangerous.sol and ReentrancyDemo.sol in the same folder so the relative import resolves.
 
-## Contract and test result
+## Sepolia result for question 5(g)
 
-- Contract: `0x364924fEa0B8E54B377246F1E6d0cd60e43e47b4`
-- Solidity compiler used in Remix: 0.4.22
-- Constructor minimum bet: `1000000000000000` wei (0.001 Sepolia ETH)
-- Constructor maximum number of bets: `100`
-- Deployment transaction: `0x1c75429444db7f44532accf08b0716fec275b0ff00a3c83a3f4dd77a7ab880e1`
-- Browser test: number 7, amount 0.001 Sepolia ETH
-- Observed browser result: "Bet confirmed on Sepolia."
-- Bet transaction: `0xc9a061e42ec4da2366c252230508a4be310ae021c655f02ec36ed7281092efe0`
+- Contract: 0x7732a6c0502F229B032f91570aDcd29314aB7596
+- hello() calldata: 0x19ff1d21
+- Transaction value: 0 ETH
+- Successful call transaction: https://sepolia.etherscan.io/tx/0xfcec60be36cbf823fbe66b69677ebb6e5ec1d2eb5fe2b0842dcd7f213c47068d
+- Block: 11945076
+- Read-only function result: Hello, world!
 
-The test demonstrated frontend rendering, a wallet connection and one confirmed bet. The contract requests its random draw after 100 bets. The draw, prize distribution, IPFS hosting and a custom domain were not tested. This tutorial contract accepts only one bet per wallet address until its stored player data is cleared; the submitted source has no round-reset mechanism for that data.
+A read-only call displays the return string. An ordinary transaction receipt does not directly include the Solidity return value.
 
-The source in `contracts/Casino.sol` uses the compiler pragma and local import used in Remix. Both it and its `oraclizeAPI_0.4.sol` dependency are included. The frontend is configured for the already deployed contract address above.
+## Local classroom demonstration for question 6
 
-## Files
+Dangerous.sol is intentionally vulnerable. The demonstration was tested only against a locally deployed instance with simulated balances. The original contract held 5.5 ETH from another simulated account; the demonstration deposited 2 ETH and received the full 7.5 ETH. The same attempt reverted against SafeDeposits, preserving the existing 5.5 ETH; an ordinary 1 ETH withdrawal passed.
 
-- `src/`: editable React and CSS sources
-- `contracts/`: Casino Solidity source and its oracle API dependency
-- `dist/`: HTML and compiled frontend used by the local server
-- `package.json` and `package-lock.json`: dependencies and reproducible installation
-- `webpack.config.js`: frontend build configuration
-- `LICENSE`: original tutorial MIT license
-
-## Source attribution
-
-Original Casino tutorial and contract by Merunas Grincalaitis (merlox):
-https://github.com/merlox/casino-ethereum
-
-Oracle API source:
-https://github.com/provable-things/ethereum-api/blob/master/old-contracts/previous-api-contracts/oraclizeAPI_0.4.sol
-
-Original license and copyright notices are retained.
+The Word report contains the explanations, measurements, and screenshot evidence. Upload these individual source files and this README into the assignment3 folder of the existing course repository.
